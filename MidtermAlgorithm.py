@@ -89,8 +89,8 @@ try:
 except ValueError:
     print("Invalid input! There are only 5 choices, please enter a valid number(1 to 5) next time")
     sys.exit()
-item_names = pd.read_csv(f"{os.getcwd()}/{selected_stores[selected_id]}_items.csv")
-transactions = pd.read_csv(f"{os.getcwd()}/{selected_stores[selected_id]}_transactions.csv")
+item_names = pd.read_csv(f"{os.getcwd()}/Itemsets/{selected_stores[selected_id]}_items.csv")
+transactions = pd.read_csv(f"{os.getcwd()}/Itemsets/{selected_stores[selected_id]}_transactions.csv")
 print(f"You have selected the {selected_stores[selected_id]} dataset")
 
 # Enter the minimum support and the minimum confidence 
