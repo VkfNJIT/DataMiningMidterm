@@ -10,13 +10,7 @@ from mlxtend.preprocessing import TransactionEncoder
 from mlxtend.frequent_patterns import association_rules
 
 def item_k_support_possibilities(item_names, k):
-    '''
-    Generate all combinations of itemsets for min support
 
-    Parameters: 
-    item_names (list) - A list of all the key values for the itemsets
-    k (int) - 
-    '''
     item_k_arrange = combinations(item_names, k)
     possibilities_of_k_items = [item for item in item_k_arrange]
     return possibilities_of_k_items
@@ -33,24 +27,20 @@ def count_itemsets_for_k(current_itemset, transactions, k):
 def get_itemsets_with_confidence(total_itemset_frequent, min_confidence):
     itemset_confidence = {}
     itemset_copy = total_itemset_frequent.copy()
-
     for key, val in total_itemset_frequent.items():
         if isinstance(key, tuple):
             if len(key) == 2:
                 first = key[0]
                 second = key[-1]
-                
                 confidence_val = val / total_itemset_frequent[first]
                 if confidence_val >= min_confidence:
                     itemset_confidence[(first, second)] = confidence_val
-                        
                 first_reverse = key[-1]
                 second_reverse = key[0]
                 confidence_val = val / itemset_copy[first_reverse]
                 if confidence_val >= min_confidence:
                     itemset_confidence[(first_reverse, second_reverse)] = confidence_val
                     itemset_copy[(first_reverse, second_reverse)] = val
-                
                 
             elif len(key) > 2:    
                 for i in range(1, len(key)+1):
@@ -71,7 +61,6 @@ def get_itemsets_with_confidence(total_itemset_frequent, min_confidence):
                                         itemset_confidence[(first, second)] = confidence_val
                                         itemset_copy[(first, second)] = val
                                 else:
-                                    
                                     for item in total_itemset_frequent.keys():
                                         if len(set(item).difference(set(first))) == 0:
                                             confidence_val = val / itemset_copy[item]
@@ -85,9 +74,11 @@ def collect_frequent_itemset(unfilter_dict_k, min_support):
     filtered_dict = {}
     for key, val in unfilter_dict_k.items():
         if val >= min_support:
-            itemsetkey = f'{key}'
+            itemsetkey = key
             filtered_dict[key] = val
     return filtered_dict
+
+      
 
 
 
