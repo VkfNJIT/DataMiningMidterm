@@ -1,8 +1,5 @@
 import os
-import sys
-import random
 from itertools import combinations # important for getting all the possible k itemsets
-import numpy as np
 import pandas as pd
 from mlxtend.frequent_patterns import apriori
 from mlxtend.frequent_patterns import fpgrowth
@@ -82,11 +79,10 @@ def collect_frequent_itemset(unfilter_dict_k, min_support):
 
 
 
-# Loads a dictionary of datasets that you can select by number
 selected_stores = {1: "amazon", 2: "best_buy", 3: "k-mart", 4: "nike", 5: "ace_hardware"}
-
 try:
-    selected_id = int(input("Enter the store number for the dataset that you want:\n1. Amazon\n2. Best Buy\n3. K-mart\n4. Nike\n5. Ace Hardware\n"))
+    selected_id = int(input(
+    "Enter the store number for the dataset that you want:\n1. Amazon\n2. Best Buy\n3. K-mart\n4. Nike\n5. Ace Hardware\n"))
     if selected_id not in selected_stores.keys():
         print("invalid number, There are only 5 choices!Try again next time")
         sys.exit()
@@ -119,9 +115,7 @@ for k, _ in itemset_k1.items():
         itemset_k1[k] = float(0)
     else: 
         itemset_k1[k] = float(item_k1[k]) / len(transactions["Transaction"])
-
 itemset_frequent_k1 = collect_frequent_itemset(itemset_k1, min_support)
-
 item_k = transactions['Transaction'].str.split(", ").to_list()
 itemset_k = {}
 itemset_frequent_k = itemset_frequent_k1
@@ -132,25 +126,27 @@ while len(itemset_frequent_k) >= k_val:
     itemset_frequent_k = collect_frequent_itemset(itemset_k, min_support)
     updated_itemset.update(itemset_frequent_k)
     k_val += 1
-
 for key_s, val_s in updated_itemset.items():
     print(f"Itemset: {key_s}, Support: {val_s}\n")
-    
 item_conf, item_supp = get_itemsets_with_confidence(updated_itemset, min_confidence)
-
 print()
-
 rule_ci = 1
 for key_c,val_c in item_conf.items():
     if len(key_c) == 2 and val_c > 0:
-        print(f"Rule {rule_ci}:{set(key_c[0:1])} -> {set(key_c[1:])}\nConfidence: {round(val_c,2)*100}%\nSupport: {item_supp[key_c]*100}%")
+        print(
+        f"Rule {rule_ci}:{set(key_c[0:1])} -> {set(key_c[1:])}\nConfidence: {val_c*100:.2f}%\nSupport: {item_supp[key_c]*100:.2f}%")
         rule_ci += 1
-
+        print()
     else:
         for i in range(len(key_c)-1):
             if len(val_c) > 0:
-                print(f"Rule {rule_ci}:{set(key_c[0:i+1])} -> {set(key_c[i+1:])}\nConfidence: {round(val_c,2)*100}%\nSupport: {item_supp[key_c]*100}%")
+                print(
+        f"Rule {rule_ci}:{set(key_c[0:i+1])} -> {set(key_c[i+1:])}\nConfidence: {val_c*100:.2f}%\nSupport: {item_supp[key_c]*100:.2f}%")
                 rule_ci += 1
+                print()
+
+
+
 
 te = TransactionEncoder()
 te_ary = te.fit(item_k).transform(item_k)
