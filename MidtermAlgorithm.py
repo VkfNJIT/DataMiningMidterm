@@ -1,4 +1,5 @@
 import os
+import sys
 from itertools import combinations # important for getting all the possible k itemsets
 import pandas as pd
 from mlxtend.frequent_patterns import apriori
@@ -126,6 +127,7 @@ while len(itemset_frequent_k) >= k_val:
     itemset_frequent_k = collect_frequent_itemset(itemset_k, min_support)
     updated_itemset.update(itemset_frequent_k)
     k_val += 1
+print()
 for key_s, val_s in updated_itemset.items():
     print(f"Itemset: {key_s}, Support: {val_s}\n")
 item_conf, item_supp = get_itemsets_with_confidence(updated_itemset, min_confidence)
@@ -151,7 +153,6 @@ for key_c,val_c in item_conf.items():
 te = TransactionEncoder()
 te_ary = te.fit(item_k).transform(item_k)
 dataframe = pd.DataFrame(te_ary, columns=te.columns_)
-
 checking_apriori = apriori(dataframe, min_support=min_support, use_colnames=True)
 print()
 print("Apriori Library")
@@ -160,7 +161,9 @@ print()
 checking_fpgrowth = fpgrowth(dataframe, min_support=min_support, use_colnames=True)
 print("FP Tree Library")
 print(checking_fpgrowth)
-ar = association_rules(checking_apriori, metric='confidence', min_threshold=min_confidence)
-print()
-print("Association Rules Library")
-print(ar)
+if len(checking_apriori.index) > 0:
+    ar = association_rules(checking_apriori, metric='confidence', min_threshold=min_confidence)
+    print()
+    print("Association Rules Library")
+    ar = ar[['antecedents', 'consequents', 'support', 'confidence']]
+    print(ar)
