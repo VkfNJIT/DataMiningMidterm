@@ -1,5 +1,6 @@
 import os
 import sys
+import time
 from itertools import combinations # important for getting all the possible k itemsets
 import pandas as pd
 from mlxtend.frequent_patterns import apriori
@@ -99,7 +100,7 @@ min_support = float(input("Please enter the minimum support percent that you wan
 min_support /= 100
 min_confidence = float(input("Please enter the minimum confidence percent that you want (1 to 100):\n"))
 min_confidence /= 100
-
+start_point = time.time() 
 itemset_k1 = item_names.set_index("Item Name").to_dict()["Item #"]
 
 # This technique Only for the itemsets where k = 1 
@@ -147,23 +148,41 @@ for key_c,val_c in item_conf.items():
                 rule_ci += 1
                 print()
 
-
-
-
+end_point = time.time()
+total_time = end_point - start_point
+print("Time Taken to Execute Brute Force: ", total_time)
+    
 te = TransactionEncoder()
 te_ary = te.fit(item_k).transform(item_k)
 dataframe = pd.DataFrame(te_ary, columns=te.columns_)
+apriori_start_point = time.time()
 checking_apriori = apriori(dataframe, min_support=min_support, use_colnames=True)
 print()
 print("Apriori Library")
 print(checking_apriori)
-print()
-checking_fpgrowth = fpgrowth(dataframe, min_support=min_support, use_colnames=True)
-print("FP Tree Library")
-print(checking_fpgrowth)
 if len(checking_apriori.index) > 0:
-    ar = association_rules(checking_apriori, metric='confidence', min_threshold=min_confidence)
+    ar_ap = association_rules(checking_apriori, metric='confidence', min_threshold=min_confidence)
     print()
-    print("Association Rules Library")
-    ar = ar[['antecedents', 'consequents', 'support', 'confidence']]
-    print(ar)
+    print("Apriori Association Rules Library")
+    ar_ap = ar_ap[['antecedents', 'consequents', 'support', 'confidence']]
+    print(ar_ap)
+    print()
+apriori_end_point = time.time()
+total_apriori_time = apriori_end_point - apriori_start_point
+print("Time taken to execute Apriori: ", total_apriori_time)
+print()
+fp_growth_start_point = time.time()
+checking_fpgrowth = fpgrowth(dataframe, min_support=min_support, use_colnames=True)
+print("FP Growth Library")
+print(checking_fpgrowth)
+if len(checking_fpgrowth.index) > 0:
+    ar_fp = association_rules(checking_fpgrowth, metric='confidence', min_threshold=min_confidence)
+    print()
+    print("FP Growth Association Rules Library")
+    ar_fp = ar_fp[['antecedents', 'consequents', 'support', 'confidence']]
+    print(ar_fp)
+    print()    
+fp_growth_end_point = time.time()
+total_fp_time = fp_growth_end_point - fp_growth_start_point
+print("Time taken to execute FP Growth: ", total_fp_time)
+print()
